@@ -1,7 +1,5 @@
 # Kadenzo MCP server
 
-[![Kadenzo/kadenzo-mcp MCP server](https://glama.ai/mcp/servers/Kadenzo/kadenzo-mcp/badge)](https://glama.ai/mcp/servers/Kadenzo/kadenzo-mcp)
-
 Connect any MCP-capable AI agent — **Claude Desktop, Cursor, ChatGPT, Codex** — to
 [Kadenzo](https://kadenzo.app) and let it schedule, manage, and analyze social posts
 across **11 networks** (Instagram, TikTok, X, LinkedIn, YouTube, Facebook, Pinterest,
@@ -26,6 +24,16 @@ just *draft* content — it can **ship** it.
 | `get_best_times` | Personalized best posting times for an account (Professional+) |
 | `list_mentions` | Social-listening mentions (who's talking about your keywords) |
 | `post_comment` | Post a comment/reply to your post (instagram/facebook/linkedin) |
+| `list_keywords` | List the social-listening keywords you track |
+| `add_keyword` | Track a new listening keyword (per-plan caps apply) |
+| `update_keyword` | Edit a keyword, or pause/resume it with `is_active` |
+| `delete_keyword` | Stop tracking a keyword |
+| `get_listening_analytics` | Mention volume, platform split, sentiment over time |
+| `get_share_of_voice` | Brand vs competitor Share of Voice report (Enterprise) |
+| `list_dm_automations` | DM automation rules + funnel stats + contact usage |
+| `create_dm_automation` | Create a DM automation rule (comment→DM, keyword DM, DM links, …) |
+| `update_dm_automation` | Edit a rule, or pause/resume it with `active` |
+| `delete_dm_automation` | Delete a DM automation rule |
 
 ## Setup
 

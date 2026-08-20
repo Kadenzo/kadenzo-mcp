@@ -45,7 +45,8 @@ async function api(method, path, { body, query } = {}) {
 const ok = (data) => ({ content: [{ type: 'text', text: typeof data === 'string' ? data : JSON.stringify(data, null, 2) }] })
 const fail = (e) => ({ content: [{ type: 'text', text: `Error: ${e?.message || e}` }], isError: true })
 
-const server = new McpServer({ name: 'kadenzo', version: '1.0.0' })
+// Keep in sync with package.json + server.json on every release.
+const server = new McpServer({ name: 'kadenzo', version: '1.4.0' })
 
 server.tool(
   'list_accounts',
@@ -197,6 +198,136 @@ server.tool(
   async (a) => { try { return ok(await api('POST', '/comments', { body: a })) } catch (e) { return fail(e) } },
 )
 
+server.tool(
+  'list_keywords',
+  'List the social-listening keywords this workspace tracks — id, keyword, role (brand/competitor/topic), platforms, aliases, active state. Mentions for them arrive via list_mentions.',
+  {},
+  async () => { try { return ok(await api('GET', '/listening/keywords')) } catch (e) { return fail(e) } },
+)
+
+server.tool(
+  'add_keyword',
+  'Start tracking a social-listening keyword. Per-plan keyword caps apply (Professional 5, Enterprise 15). Mentions are fetched on the listening pipeline\'s own cadence — there is no fetch-now; poll list_mentions for results.',
+  {
+    keyword: z.string().describe('The keyword to track (≤100 characters).'),
+    role: z.enum(['brand', 'competitor', 'topic']).optional().describe('brand (default) vs competitor drives the Share of Voice report; topic is excluded from it.'),
+    platforms: z.array(z.string()).optional().describe('Sources to search, e.g. ["reddit","bluesky","youtube","hackernews"]. Omit for the default set.'),
+    aliases: z.array(z.string()).optional().describe('Alternate spellings (max 3). Each alias costs extra search quota.'),
+    exclude_terms: z.array(z.string()).optional().describe('Skip mentions containing any of these.'),
+    require_terms: z.array(z.string()).optional().describe('Only keep mentions containing at least one of these.'),
+    brand_context: z.string().optional().describe('Short description of the brand, used by the AI relevancy scorer.'),
+  },
+  async (a) => { try { return ok(await api('POST', '/listening/keywords', { body: a })) } catch (e) { return fail(e) } },
+)
+
+server.tool(
+  'update_keyword',
+  'Edit a tracked keyword — including is_active=false to pause tracking without losing history.',
+  {
+    id: z.string().describe('Keyword id from list_keywords.'),
+    keyword: z.string().optional(),
+    role: z.enum(['brand', 'competitor', 'topic']).optional(),
+    platforms: z.array(z.string()).optional(),
+    aliases: z.array(z.string()).optional(),
+    exclude_terms: z.array(z.string()).optional(),
+    require_terms: z.array(z.string()).optional(),
+    brand_context: z.string().optional(),
+    is_active: z.boolean().optional().describe('false pauses tracking, true resumes.'),
+  },
+  async ({ id, ...body }) => { try { return ok(await api('PATCH', `/listening/keywords/${id}`, { body })) } catch (e) { return fail(e) } },
+)
+
+server.tool(
+  'delete_keyword',
+  'Stop tracking a keyword and drop its mentions. Prefer update_keyword with is_active=false if the user may want the history back.',
+  { id: z.string() },
+  async ({ id }) => { try { return ok(await api('DELETE', `/listening/keywords/${id}`)) } catch (e) { return fail(e) } },
+)
+
+server.tool(
+  'get_listening_analytics',
+  'Aggregated social-listening analytics: mention volume over time, per-platform split, sentiment distribution and trend, totals. Defaults to quality-filtered mentions.',
+  {
+    days: z.number().optional().describe('1-30, default 7 (capped by mention retention).'),
+    keyword_id: z.string().optional().describe('Restrict to one keyword (id from list_keywords).'),
+    include_low_relevancy: z.boolean().optional().describe('Include low-relevancy mentions the feed normally hides.'),
+  },
+  async (a) => {
+    try {
+      const query = { days: a.days, keyword_id: a.keyword_id }
+      if (a.include_low_relevancy) query.include_low_relevancy = 'true'
+      return ok(await api('GET', '/listening/analytics', { query }))
+    } catch (e) { return fail(e) }
+  },
+)
+
+server.tool(
+  'get_share_of_voice',
+  'Share of Voice report — your brand keywords vs competitor keywords: per-keyword mention/sentiment totals, your share of relevant conversation (current + previous window), daily series. Requires the Enterprise plan (403 otherwise — do not retry).',
+  {
+    days: z.number().optional().describe('1-90, default 30.'),
+    platform: z.string().optional().describe('Restrict to one source, e.g. "reddit".'),
+  },
+  async (a) => { try { return ok(await api('GET', '/listening/share-of-voice', { query: a })) } catch (e) { return fail(e) } },
+)
+
+server.tool(
+  'list_dm_automations',
+  'List the DM automation rules on your Instagram/Facebook accounts, with per-rule funnel stats (reached → opted in → clicked, plus captured emails), this month\'s contact usage vs plan cap, and any accounts Meta is rate-limiting.',
+  {},
+  async () => { try { return ok(await api('GET', '/dm/automations')) } catch (e) { return fail(e) } },
+)
+
+server.tool(
+  'create_dm_automation',
+  'Create a DM automation rule. trigger_type: comment_keyword (comment → DM; REQUIRES opening_message + button_label — Meta\'s two-step opt-in, enforced), dm_keyword, story_reply_keyword, default_reply, or ref_link (campaign DM link; Instagram requires conversation starters on the account, verified at create — a 502 means the check could not run, retry). Sending always goes through the platform\'s pacing engine; there is no send-a-DM-now tool.',
+  {
+    platform: z.enum(['instagram', 'facebook']),
+    account_id: z.string().describe('Account id from list_accounts.'),
+    trigger_type: z.enum(['comment_keyword', 'dm_keyword', 'story_reply_keyword', 'default_reply', 'ref_link']),
+    keywords: z.array(z.string()).optional().describe('Trigger keywords (required for *_keyword triggers; the campaign name for ref_link).'),
+    match_type: z.enum(['exact', 'contains', 'begins_with']).optional().describe('Default "contains".'),
+    reply_variants: z.array(z.string()).optional().describe('DM reply message(s) — one is rotated per send. Required unless ai_enabled.'),
+    public_reply_variants: z.array(z.string()).optional().describe('comment_keyword only: public comment replies (e.g. "Check your DMs!").'),
+    opening_message: z.string().optional().describe('comment_keyword: the opt-in DM shown with the button. Required for comment_keyword.'),
+    button_label: z.string().optional().describe('comment_keyword: the opt-in button text. Required for comment_keyword.'),
+    ai_enabled: z.boolean().optional().describe('AI-composed replies (not for comment_keyword). Requires ai_prompt.'),
+    ai_prompt: z.string().optional().describe('Instructions for AI replies.'),
+    name: z.string().optional(),
+    once_per_user_hours: z.number().optional().describe('Per-person cooldown in hours. 0 disables.'),
+    active: z.boolean().optional().describe('Default true. Set false to create paused.'),
+  },
+  async (a) => { try { return ok(await api('POST', '/dm/automations', { body: a })) } catch (e) { return fail(e) } },
+)
+
+server.tool(
+  'update_dm_automation',
+  'Edit a DM automation rule — most commonly active=false/true to pause or resume it. comment_keyword rules cannot drop opening_message or button_label.',
+  {
+    id: z.string().describe('Rule id from list_dm_automations.'),
+    active: z.boolean().optional(),
+    name: z.string().optional(),
+    keywords: z.array(z.string()).optional(),
+    match_type: z.enum(['exact', 'contains', 'begins_with']).optional(),
+    reply_variants: z.array(z.string()).optional(),
+    public_reply_variants: z.array(z.string()).optional(),
+    opening_message: z.string().optional(),
+    button_label: z.string().optional(),
+    ai_enabled: z.boolean().optional(),
+    ai_prompt: z.string().optional(),
+    once_per_user_hours: z.number().optional(),
+  },
+  async ({ id, ...body }) => { try { return ok(await api('PATCH', `/dm/automations/${id}`, { body })) } catch (e) { return fail(e) } },
+)
+
+server.tool(
+  'delete_dm_automation',
+  'Delete a DM automation rule permanently. Prefer update_dm_automation with active=false if the user may want it back.',
+  { id: z.string() },
+  async ({ id }) => { try { return ok(await api('DELETE', `/dm/automations/${id}`)) } catch (e) { return fail(e) } },
+)
+
 const transport = new StdioServerTransport()
 await server.connect(transport)
-console.error('Kadenzo MCP server running (stdio). 13 tools available.')
+// Keep this count in sync with the server.tool(...) blocks above.
+console.error('Kadenzo MCP server running (stdio). 23 tools available.')
