@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.jors7/kadenzo-mcp",
-  "description": "Schedule, manage, generate & analyze social posts across 11 networks from any AI agent.",
+  "description": "Schedule, manage, generate & analyze social posts on 11 networks from any AI agent. Hosted or local.",
   "version": "1.4.0",
   "repository": {
     "url": "https://github.com/jors7/kadenzo-mcp",
@@ -24,6 +24,12 @@
           "name": "KADENZO_API_KEY"
         }
       ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://studio.kadenzo.app/api/mcp"
     }
   ]
 }
