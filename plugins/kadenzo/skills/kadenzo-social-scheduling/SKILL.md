@@ -5,8 +5,8 @@ description: Schedule, review and change social media posts through the Kadenzo 
 
 # Scheduling social posts with Kadenzo
 
-Kadenzo is a hosted social media scheduler. The `kadenzo` MCP server in this
-plugin acts on the user's own Kadenzo account (sign in when Cursor asks). The
+Kadenzo is a hosted social media scheduler. The `kadenzo` MCP server
+acts on the user's own Kadenzo account (sign in when your agent asks). The
 MCP server needs a Professional or Enterprise plan; a 403 error means the
 plan doesn't include it, so explain that instead of retrying.
 
