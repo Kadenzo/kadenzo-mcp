@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /**
  * Kadenzo MCP server — exposes the Kadenzo Studio public API (studio.kadenzo.app/api/v1)
- * as Model Context Protocol tools, so any MCP-capable agent (Claude Desktop, Cursor,
- * ChatGPT, …) can schedule, manage, and analyze social posts across 11 networks.
+ * as Model Context Protocol tools, so local MCP clients (Claude Code, Cursor, …) can
+ * schedule, manage, and analyze social posts across 11 networks. Remote clients
+ * (Claude, ChatGPT) use the hosted server at studio.kadenzo.app/api/mcp instead.
  *
  * Auth: set KADENZO_API_KEY (generate at studio.kadenzo.app/dashboard/settings?section=api).
  * Transport: stdio (the standard for locally-run MCP servers).

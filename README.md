@@ -1,6 +1,6 @@
 # Kadenzo MCP server
 
-Connect any MCP-capable AI agent — **Claude Desktop, Cursor, ChatGPT, Codex** — to
+Connect any MCP-capable AI agent (**Claude, ChatGPT, Claude Code, Cursor, Codex**) to
 [Kadenzo](https://kadenzo.app) and let it schedule, manage, and analyze social posts
 across **11 networks** (Instagram, TikTok, X, LinkedIn, YouTube, Facebook, Pinterest,
 Threads, Bluesky, Mastodon, Telegram). It wraps the Kadenzo Studio public API as
@@ -35,7 +35,25 @@ just *draft* content — it can **ship** it.
 | `update_dm_automation` | Edit a rule, or pause/resume it with `active` |
 | `delete_dm_automation` | Delete a DM automation rule |
 
-## Setup
+## Hosted server (recommended, no install)
+
+Kadenzo also runs this server for you at **`https://studio.kadenzo.app/api/mcp`**. Apps that
+support remote MCP servers connect by signing in with Kadenzo, no API key to copy:
+
+- **Claude** (web and desktop): [Kadenzo in Claude's connector directory](https://claude.ai/directory/kadenzo) → Connect.
+- **ChatGPT**: Settings → Security and login → Developer mode, then Plugins → + → MCP app with the URL and OAuth (Developer mode is still rolling out on some accounts).
+- **Claude Code**: `claude mcp add --transport http kadenzo https://studio.kadenzo.app/api/mcp`, then `/mcp` to sign in.
+- **Cursor**: install the Kadenzo plugin (this repo is one: `.cursor-plugin/plugin.json`, `mcp.json` and a
+  scheduling skill in `skills/`), then Customize → MCPs → kadenzo → Authenticate. Or add the URL yourself
+  under Customize → MCPs → New MCP Server.
+
+Clients that send headers can use an API key instead: `"url": "https://studio.kadenzo.app/api/mcp"` with
+`"headers": { "Authorization": "Bearer kdz_live_…" }`. The hosted server has the same tools except
+`upload_media` (pass public `media_urls` instead). Connections need the Professional plan or higher.
+
+## Local setup (this package)
+
+Use this npm package when your client only runs local (stdio) servers.
 
 1. Generate an API key in Kadenzo: **Settings → API keys** (`studio.kadenzo.app/dashboard/settings?section=api`). The API is available on paid plans.
 2. Add the server to your MCP client. **Claude Desktop** (`claude_desktop_config.json`) / **Cursor** (`~/.cursor/mcp.json`):

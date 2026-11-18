@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "kadenzo": {
+      "url": "https://studio.kadenzo.app/api/mcp"
+    }
+  }
+}
