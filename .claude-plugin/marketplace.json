@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "kadenzo",
-      "source": "./",
+      "source": "./plugins/kadenzo",
       "description": "Schedule, review and analyze social posts on 11 networks from Claude Code, through Kadenzo's hosted MCP server."
     }
   ]
