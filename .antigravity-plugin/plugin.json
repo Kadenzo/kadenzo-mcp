@@ -1,0 +1,18 @@
+{
+  "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+  "name": "kadenzo",
+  "displayName": "Kadenzo",
+  "description": "Schedule and manage social media posts on 11 networks (Instagram, TikTok, X, LinkedIn, Facebook, YouTube, Pinterest, Threads, Bluesky, Telegram, Mastodon), and read post analytics and social listening, through Kadenzo's hosted MCP server.",
+  "version": "1.0.0",
+  "logo": "assets/logo.png",
+  "suggestedPrompts": [
+    "List my Kadenzo accounts",
+    "Schedule a LinkedIn post for tomorrow at 9am",
+    "How did my posts do last week?"
+  ],
+  "author": { "name": "Kadenzo", "email": "jan@kadenzo.app", "url": "https://kadenzo.app" },
+  "homepage": "https://kadenzo.app",
+  "repository": "https://github.com/Kadenzo/kadenzo-mcp",
+  "license": "MIT",
+  "keywords": ["social-media", "scheduler", "instagram", "tiktok", "linkedin", "analytics", "mcp"]
+}

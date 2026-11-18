@@ -48,6 +48,9 @@ support remote MCP servers connect by signing in with Kadenzo, no API key to cop
   ```
   Or add only the server: `claude mcp add --transport http kadenzo https://studio.kadenzo.app/api/mcp`.
   If you already connected Kadenzo on claude.ai, Claude Code has the tools already; the plugin adds the skill.
+- **Antigravity**: `agy plugin install https://github.com/Kadenzo/kadenzo-mcp` (plugin manifest in
+  `.antigravity-plugin/`, server in `mcp_config.json`, plus the scheduling skill), then sign in to the
+  `kadenzo` server and paste the code from the Kadenzo page back into Antigravity.
 - **Gemini CLI**: `gemini extensions install https://github.com/Kadenzo/kadenzo-mcp`, then start `gemini`
   and sign in when the Kadenzo server asks (`/mcp auth kadenzo`). The extension also loads the scheduling skill.
 - **Cursor**: install the Kadenzo plugin (this repo is one: `.cursor-plugin/plugin.json`, `mcp.json` and a
