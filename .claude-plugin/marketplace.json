@@ -1,0 +1,15 @@
+{
+  "name": "kadenzo",
+  "description": "Kadenzo's official Claude Code plugin: schedule and analyze social media posts from Claude Code.",
+  "owner": {
+    "name": "Kadenzo",
+    "email": "jan@kadenzo.app"
+  },
+  "plugins": [
+    {
+      "name": "kadenzo",
+      "source": "./",
+      "description": "Schedule, review and analyze social posts on 11 networks from Claude Code, through Kadenzo's hosted MCP server."
+    }
+  ]
+}

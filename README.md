@@ -42,7 +42,12 @@ support remote MCP servers connect by signing in with Kadenzo, no API key to cop
 
 - **Claude** (web and desktop): [Kadenzo in Claude's connector directory](https://claude.ai/directory/kadenzo) → Connect.
 - **ChatGPT**: Settings → Security and login → Developer mode, then Plugins → + → MCP app with the URL and OAuth (Developer mode is still rolling out on some accounts).
-- **Claude Code**: `claude mcp add --transport http kadenzo https://studio.kadenzo.app/api/mcp`, then `/mcp` to sign in.
+- **Claude Code**: install the Kadenzo plugin (the hosted server plus a scheduling skill), then `/mcp` to sign in:
+  ```
+  /plugin install kadenzo --marketplace Kadenzo/kadenzo-mcp
+  ```
+  Or add only the server: `claude mcp add --transport http kadenzo https://studio.kadenzo.app/api/mcp`.
+  If you already connected Kadenzo on claude.ai, Claude Code has the tools already; the plugin adds the skill.
 - **Cursor**: install the Kadenzo plugin (this repo is one: `.cursor-plugin/plugin.json`, `mcp.json` and a
   scheduling skill in `skills/`), then Customize → MCPs → kadenzo → Authenticate. Or add the URL yourself
   under Customize → MCPs → New MCP Server.

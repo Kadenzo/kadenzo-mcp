@@ -1,0 +1,15 @@
+{
+  "name": "kadenzo",
+  "displayName": "Kadenzo",
+  "version": "1.0.0",
+  "description": "Schedule and manage social media posts on 11 networks (Instagram, TikTok, X, LinkedIn, Facebook, YouTube, Pinterest, Threads, Bluesky, Telegram, Mastodon), read analytics and social listening, from Claude Code.",
+  "author": { "name": "Kadenzo", "email": "jan@kadenzo.app", "url": "https://kadenzo.app" },
+  "homepage": "https://kadenzo.app",
+  "repository": "https://github.com/Kadenzo/kadenzo-mcp",
+  "license": "MIT",
+  "keywords": ["social-media", "scheduler", "instagram", "tiktok", "linkedin", "x", "analytics", "mcp"],
+  "icon": "./assets/logo.png",
+  "documentationUrl": "https://studio.kadenzo.app/developers",
+  "privacyPolicyUrl": "https://kadenzo.app/privacy",
+  "termsOfServiceUrl": "https://kadenzo.app/terms"
+}
