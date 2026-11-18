@@ -19,5 +19,10 @@
     "analytics",
     "mcp"
   ],
-  "logo": "assets/logo.png"
+  "logo": "assets/logo.png",
+  "mcpServers": {
+    "kadenzo": {
+      "url": "https://studio.kadenzo.app/api/mcp"
+    }
+  }
 }

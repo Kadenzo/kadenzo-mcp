@@ -53,8 +53,8 @@ support remote MCP servers connect by signing in with Kadenzo, no API key to cop
   `kadenzo` server and paste the code from the Kadenzo page back into Antigravity.
 - **Gemini CLI**: `gemini extensions install https://github.com/Kadenzo/kadenzo-mcp`, then start `gemini`
   and sign in when the Kadenzo server asks (`/mcp auth kadenzo`). The extension also loads the scheduling skill.
-- **Cursor**: install the Kadenzo plugin (this repo is one: `.cursor-plugin/plugin.json`, `mcp.json` and a
-  scheduling skill in `skills/`), then Customize → MCPs → kadenzo → Authenticate. Or add the URL yourself
+- **Cursor**: install the Kadenzo plugin (this repo is one: `.cursor-plugin/plugin.json`, which declares the
+  server, and a scheduling skill in `skills/`), then Customize → MCPs → kadenzo → Authenticate. Or add the URL yourself
   under Customize → MCPs → New MCP Server.
 
 Clients that send headers can use an API key instead: `"url": "https://studio.kadenzo.app/api/mcp"` with
