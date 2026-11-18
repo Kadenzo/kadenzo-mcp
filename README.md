@@ -1,11 +1,56 @@
-# Kadenzo MCP server
+# Kadenzo for AI agents
 
-Connect any MCP-capable AI agent (**Claude, ChatGPT, Claude Code, Cursor, Codex**) to
-[Kadenzo](https://kadenzo.app) and let it schedule, manage, and analyze social posts
-across **11 networks** (Instagram, TikTok, X, LinkedIn, YouTube, Facebook, Pinterest,
-Threads, Bluesky, Mastodon, Telegram). It wraps the Kadenzo Studio public API as
-[Model Context Protocol](https://modelcontextprotocol.io) tools, so your agent doesn't
-just *draft* content — it can **ship** it.
+Let your AI agent schedule social media posts. [Kadenzo](https://kadenzo.app) is a hosted social media
+scheduler; this repo connects it to Claude, ChatGPT, Cursor, Claude Code, Antigravity and any other
+[MCP](https://modelcontextprotocol.io) client. Your agent drafts a post for each network, checks it against
+that network's limits, and schedules it after you say yes, across **11 networks**: Instagram, TikTok, X,
+LinkedIn, Facebook, YouTube, Pinterest, Threads, Bluesky, Telegram and Mastodon. It can also read your
+analytics, best posting times and social listening.
+
+Sign in with your Kadenzo account (OAuth), no API key needed. Needs a Kadenzo **Professional** plan or
+higher ([pricing](https://kadenzo.app/pricing)).
+
+## Install
+
+| Agent | How |
+|---|---|
+| **Claude** (web and desktop) | [Kadenzo in Claude's directory](https://claude.ai/directory/kadenzo) → Connect |
+| **ChatGPT** | [Kadenzo in ChatGPT's plugin directory](https://chatgpt.com/plugins/plugin_asdk_app_6abeafd359a081919cd592a1bea7943b) |
+| **Claude Code** | `/plugin install kadenzo --marketplace Kadenzo/kadenzo-mcp`, then `/mcp` to sign in |
+| **Cursor** | Add the server below to `mcp.json` (or install the Kadenzo plugin), then Customize → MCPs → kadenzo → Authenticate |
+| **Antigravity** | `agy plugin install https://github.com/Kadenzo/kadenzo-mcp`, then sign in from `/mcp` |
+| **Gemini CLI** | `gemini extensions install https://github.com/Kadenzo/kadenzo-mcp`, then `/mcp auth kadenzo` |
+| **OpenClaw** | `openclaw skills install @jors7/kadenzo-social-scheduling` (the skill; add the server below) |
+| **Any MCP client** | Remote server `https://studio.kadenzo.app/api/mcp`, sign in when asked |
+| **Skill only** | `npx skills add Kadenzo/kadenzo-mcp` ([skills.sh](https://skills.sh/kadenzo/kadenzo-mcp/kadenzo-social-scheduling)) |
+
+The hosted server as JSON, for clients configured by file (Cursor's `~/.cursor/mcp.json`, for example):
+
+```json
+{
+  "mcpServers": {
+    "kadenzo": { "url": "https://studio.kadenzo.app/api/mcp" }
+  }
+}
+```
+
+Then ask: *"List my Kadenzo accounts."*
+
+## What you can ask
+
+- "Schedule this to LinkedIn and Threads for Tuesday 9am. Show me each version first."
+- "Read the commits since Monday and write a release post for X and Bluesky." (in Cursor or Claude Code)
+- "What's scheduled this week? Move Friday's post to Monday."
+- "How did last week's posts do? Which network got the most engagement?"
+- "When do my followers engage most? Use that time for tomorrow's post."
+- "Who mentioned my brand this week?"
+
+## How it stays safe
+
+- **Schedule only.** Every post gets a future time and can be edited or cancelled in Kadenzo until it goes out. There is no instant-publish call.
+- **Check first.** `schedule_post` with `validate_only: true` tests accounts, each network's limits and the time without creating anything.
+- **Ask first.** The plugins include a skill ([`skills/kadenzo-social-scheduling`](skills/kadenzo-social-scheduling/SKILL.md)) that tells the agent to list accounts, confirm your time zone, validate, and get a clear yes before scheduling, editing or cancelling.
+- **No passwords.** Your social accounts connect inside Kadenzo through each network's own login. The agent never sees a password or network token. Disconnect it any time under Settings → API keys.
 
 ## Tools
 
@@ -17,56 +62,44 @@ just *draft* content — it can **ship** it.
 | `get_post` | One post: status, per-channel outcome, options/thread |
 | `update_post` | Edit a not-yet-published post |
 | `cancel_post` | Cancel a scheduled post before it publishes |
-| `upload_media` | Upload a local image/video file, get a URL for `media_urls` |
+| `upload_media` | Upload a local image/video file, get a URL for `media_urls` (local server only) |
 | `get_account_analytics` | Recent posts + engagement metrics for an account |
 | `get_post_analytics` | Per-channel metrics for a post you scheduled |
-| `generate_content` | Generate post copy for a platform from a topic ("generate then schedule") |
-| `get_best_times` | Personalized best posting times for an account (Professional+) |
+| `generate_content` | Generate post copy for a platform from a topic |
+| `get_best_times` | Personalized best posting times for an account |
 | `list_mentions` | Social-listening mentions (who's talking about your keywords) |
-| `post_comment` | Post a comment/reply to your post (instagram/facebook/linkedin) |
+| `post_comment` | Post a comment/reply to your post (Instagram, Facebook, LinkedIn) |
 | `list_keywords` | List the social-listening keywords you track |
 | `add_keyword` | Track a new listening keyword (per-plan caps apply) |
 | `update_keyword` | Edit a keyword, or pause/resume it with `is_active` |
-| `delete_keyword` | Stop tracking a keyword |
+| `delete_keyword` | Stop tracking a keyword (API key only) |
 | `get_listening_analytics` | Mention volume, platform split, sentiment over time |
-| `get_share_of_voice` | Brand vs competitor Share of Voice report (Enterprise) |
+| `get_share_of_voice` | Brand vs competitor share of voice (Enterprise) |
 | `list_dm_automations` | DM automation rules + funnel stats + contact usage |
-| `create_dm_automation` | Create a DM automation rule (comment→DM, keyword DM, DM links, …) |
-| `update_dm_automation` | Edit a rule, or pause/resume it with `active` |
-| `delete_dm_automation` | Delete a DM automation rule |
+| `create_dm_automation` | Create a DM automation rule (API key only) |
+| `update_dm_automation` | Edit, pause or resume a rule (API key only) |
+| `delete_dm_automation` | Delete a DM automation rule (API key only) |
 
-## Hosted server (recommended, no install)
+OAuth sign-ins get 18 tools; the "API key only" ones need a key (below).
 
-Kadenzo also runs this server for you at **`https://studio.kadenzo.app/api/mcp`**. Apps that
-support remote MCP servers connect by signing in with Kadenzo, no API key to copy:
+## API key instead of OAuth
 
-- **Claude** (web and desktop): [Kadenzo in Claude's connector directory](https://claude.ai/directory/kadenzo) → Connect.
-- **ChatGPT**: Settings → Security and login → Developer mode, then Plugins → + → MCP app with the URL and OAuth (Developer mode is still rolling out on some accounts).
-- **Claude Code**: install the Kadenzo plugin (the hosted server plus a scheduling skill), then `/mcp` to sign in:
-  ```
-  /plugin install kadenzo --marketplace Kadenzo/kadenzo-mcp
-  ```
-  Or add only the server: `claude mcp add --transport http kadenzo https://studio.kadenzo.app/api/mcp`.
-  If you already connected Kadenzo on claude.ai, Claude Code has the tools already; the plugin adds the skill.
-- **Antigravity**: `agy plugin install https://github.com/Kadenzo/kadenzo-mcp` (plugin manifest in
-  `.antigravity-plugin/`, server in `mcp_config.json`, plus the scheduling skill), then sign in to the
-  `kadenzo` server and paste the code from the Kadenzo page back into Antigravity.
-- **Gemini CLI**: `gemini extensions install https://github.com/Kadenzo/kadenzo-mcp`, then start `gemini`
-  and sign in when the Kadenzo server asks (`/mcp auth kadenzo`). The extension also loads the scheduling skill.
-- **Cursor**: install the Kadenzo plugin (this repo is one: `.cursor-plugin/plugin.json`, which declares the
-  server, and a scheduling skill in `skills/`), then Customize → MCPs → kadenzo → Authenticate. Or add the URL yourself
-  under Customize → MCPs → New MCP Server.
+Clients that send headers can use a key from Kadenzo (**Settings → API keys**):
 
-Clients that send headers can use an API key instead: `"url": "https://studio.kadenzo.app/api/mcp"` with
-`"headers": { "Authorization": "Bearer kdz_live_…" }`. The hosted server has the same tools except
-`upload_media` (pass public `media_urls` instead). Connections need the Professional plan or higher.
+```json
+{
+  "mcpServers": {
+    "kadenzo": {
+      "url": "https://studio.kadenzo.app/api/mcp",
+      "headers": { "Authorization": "Bearer kdz_live_…" }
+    }
+  }
+}
+```
 
-## Local setup (this package)
+## Local server (npm)
 
-Use this npm package when your client only runs local (stdio) servers.
-
-1. Generate an API key in Kadenzo: **Settings → API keys** (`studio.kadenzo.app/dashboard/settings?section=api`). The API is available on paid plans.
-2. Add the server to your MCP client. **Claude Desktop** (`claude_desktop_config.json`) / **Cursor** (`~/.cursor/mcp.json`):
+For clients that only run local (stdio) servers, this repo is also the `kadenzo-mcp` npm package:
 
 ```json
 {
@@ -80,11 +113,15 @@ Use this npm package when your client only runs local (stdio) servers.
 }
 ```
 
-3. Restart the client. Ask your agent things like *"list my connected accounts,"* *"schedule this to X and Bluesky tomorrow at 9am,"* or *"how did my last Instagram posts perform?"*
+Restart the client after adding it. Requires Node 18+. `KADENZO_API_BASE` overrides the API base URL
+(default `https://studio.kadenzo.app/api/v1`).
 
-## Notes
+## What's in this repo
 
-- Posts are **schedule-only** — provide a future `scheduled_for`; they publish automatically.
-- `KADENZO_API_BASE` overrides the API base URL (default `https://studio.kadenzo.app/api/v1`).
-- Requires Node 18+ (uses the built-in `fetch`/`FormData`).
-- Learn more / full API reference: <https://studio.kadenzo.app/developers> · <https://kadenzo.app>
+- `index.js`, `package.json`: the local npm server
+- `skills/kadenzo-social-scheduling/`: the scheduling skill (Agent Skills format)
+- `.cursor-plugin/`: Cursor plugin · `.antigravity-plugin/` + `mcp_config.json`: Antigravity plugin ·
+  `gemini-extension.json`: Gemini CLI extension · `plugins/kadenzo/` + `.claude-plugin/`: Claude Code plugin and marketplace
+- `server.json`: [MCP Registry](https://registry.modelcontextprotocol.io) entry (`io.github.jors7/kadenzo-mcp`)
+
+Docs and REST API: <https://studio.kadenzo.app/developers> · Guides: [schedule posts with Claude](https://kadenzo.app/blog/schedule-social-media-posts-with-claude) · MIT license
