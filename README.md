@@ -3,7 +3,7 @@
 [![Listed on mcpservers.org](https://mcpservers.org/badge.svg)](https://mcpservers.org/servers/kadenzo/kadenzo-mcp)
 
 Let your AI agent schedule social media posts. [Kadenzo](https://kadenzo.app) is a hosted social media
-scheduler; this repo connects it to Claude, ChatGPT, Cursor, Claude Code, Antigravity and any other
+scheduler; this repo connects it to Claude, ChatGPT, Codex, Cursor, Claude Code, Antigravity and any other
 [MCP](https://modelcontextprotocol.io) client. Your agent drafts a post for each network, checks it against
 that network's limits, and schedules it after you say yes, across **11 networks**: Instagram, TikTok, X,
 LinkedIn, Facebook, YouTube, Pinterest, Threads, Bluesky, Telegram and Mastodon. It can also read your
@@ -18,6 +18,7 @@ higher ([pricing](https://kadenzo.app/pricing)).
 |---|---|
 | **Claude** (web and desktop) | [Kadenzo in Claude's directory](https://claude.ai/directory/kadenzo) → Connect |
 | **ChatGPT** | [Kadenzo in ChatGPT's plugin directory](https://chatgpt.com/plugins/plugin_asdk_app_6abeafd359a081919cd592a1bea7943b) |
+| **Codex** | Kadenzo is in the Codex plugin directory (same listing as ChatGPT): Plugins → Kadenzo, or `codex plugin add kadenzo@openai-curated-remote` |
 | **Claude Code** | `/plugin install kadenzo --marketplace Kadenzo/kadenzo-mcp`, then `/mcp` to sign in |
 | **Cursor** | Add the server below to `mcp.json` (or install the Kadenzo plugin), then Customize → MCPs → kadenzo → Authenticate |
 | **Antigravity** | `agy plugin install https://github.com/Kadenzo/kadenzo-mcp`, then sign in from `/mcp` |
