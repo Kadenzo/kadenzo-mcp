@@ -1,5 +1,7 @@
 # Kadenzo for AI agents
 
+[![Listed on mcpservers.org](https://mcpservers.org/badge.svg)](https://mcpservers.org/servers/kadenzo/kadenzo-mcp)
+
 Let your AI agent schedule social media posts. [Kadenzo](https://kadenzo.app) is a hosted social media
 scheduler; this repo connects it to Claude, ChatGPT, Cursor, Claude Code, Antigravity and any other
 [MCP](https://modelcontextprotocol.io) client. Your agent drafts a post for each network, checks it against
